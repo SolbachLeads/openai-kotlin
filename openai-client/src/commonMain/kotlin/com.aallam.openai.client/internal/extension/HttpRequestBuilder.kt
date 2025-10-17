@@ -9,6 +9,7 @@ import io.ktor.client.request.*
  */
 internal fun HttpRequestBuilder.requestOptions(requestOptions: RequestOptions? = null) {
     if (requestOptions == null) return
+    requestOptions.portOverride?.let { port = it }
     requestOptions.headers.forEach { (key, value) ->
         if (headers.contains(key)) headers.remove(key)
         headers[key] = value
