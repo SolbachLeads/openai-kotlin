@@ -8,12 +8,17 @@ plugins {
     id("build-support")
 }
 
+val openAiKotlinBuildNonJvm: String? by project
+
 kotlin {
     explicitApi()
     jvm()
-    jsNode()
-    jsWasm()
-    native()
+
+    if (openAiKotlinBuildNonJvm == "true") {
+        jsNode()
+        jsWasm()
+        native()
+    }
 
     sourceSets {
         all {
@@ -39,14 +44,17 @@ kotlin {
                 implementation(kotlin("test-junit"))
             }
         }
-        val jsTest by getting {
-            dependencies {
-                implementation(kotlin("test-js"))
+
+        if (openAiKotlinBuildNonJvm == "true") {
+            val jsTest by getting {
+                dependencies {
+                    implementation(kotlin("test-js"))
+                }
             }
-        }
-        val wasmJsTest by getting {
-            dependencies {
-                implementation(kotlin("test-wasm-js"))
+            val wasmJsTest by getting {
+                dependencies {
+                    implementation(kotlin("test-wasm-js"))
+                }
             }
         }
     }

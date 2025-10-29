@@ -10,12 +10,16 @@ plugins {
     id("build-support")
 }
 
+val openAiKotlinBuildNonJvm: String? by project
+
 kotlin {
     explicitApi()
     jvm()
-    jsNode()
-    jsWasm()
-    native()
+    if (openAiKotlinBuildNonJvm == "true") {
+        jsNode()
+        jsWasm()
+        native()
+    }
 
     sourceSets {
         all {
@@ -59,33 +63,35 @@ kotlin {
             }
         }
 
-        val jsMain by getting {
-            dependencies {
-            }
-        }
-        val jsTest by getting {
-            dependencies {
-                implementation(kotlin("test-js"))
-            }
-        }
-        val wasmJsMain by getting {
-            dependencies {
-            }
-        }
-        val wasmJsTest by getting {
-            dependencies {
-                implementation(kotlin("test-wasm-js"))
-            }
-        }
-        val desktopTest by getting {
-            dependencies {
-                implementation(libs.ktor.client.curl)
-            }
-        }
-        if (HostManager.hostIsMac) {
-            val darwinTest by getting {
+        if (openAiKotlinBuildNonJvm == "true") {
+            val jsMain by getting {
                 dependencies {
-                    implementation(libs.ktor.client.darwin)
+                }
+            }
+            val jsTest by getting {
+                dependencies {
+                    implementation(kotlin("test-js"))
+                }
+            }
+            val wasmJsMain by getting {
+                dependencies {
+                }
+            }
+            val wasmJsTest by getting {
+                dependencies {
+                    implementation(kotlin("test-wasm-js"))
+                }
+            }
+            val desktopTest by getting {
+                dependencies {
+                    implementation(libs.ktor.client.curl)
+                }
+            }
+            if (HostManager.hostIsMac) {
+                val darwinTest by getting {
+                    dependencies {
+                        implementation(libs.ktor.client.darwin)
+                    }
                 }
             }
         }
